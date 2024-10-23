@@ -1,9 +1,11 @@
 from typing import Union
 
 from fastapi import FastAPI
+from router import tasksRouter
 
 app = FastAPI()
 
+app.include_router(tasksRouter)
 
 @app.get("/")
 def read_root():
