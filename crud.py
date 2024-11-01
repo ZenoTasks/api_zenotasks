@@ -10,8 +10,26 @@ def createTask(task: Task,session:Session,user:User) -> Task:
     session.refresh(task)
     return task
 
-def getTasks(offset: int,limit: int,session:Session,user:User) -> Task:
+def getTasks(offset: int,limit: int,order_by: str,order_direction: str,session:Session,user:User) -> Task:
     tasks = session.exec(select(Task).where(Task.user == user).offset(offset).limit(limit)).all()
+    match order_by:
+        case "date":
+            if order_direction == "asc":
+                tasks.sort(key=lambda x: x.created_at)
+            else:
+                tasks.sort(key=lambda x: x.created_at,reverse=True)
+        case "checked":
+            if order_direction == "asc":
+                tasks.sort(key=lambda x: x.done,reverse=True)
+            else:
+                tasks.sort(key=lambda x: x.done)
+        case "title":
+            if order_direction == "asc":
+                tasks.sort(key=lambda x: x.title)
+            else:
+                tasks.sort(key=lambda x: x.title,reverse=True)
+        case _:
+            tasks.sort(key=lambda x: x.id)
     return tasks
 
 def deleteTask(id: int,session:Session,user:User) -> Task:
