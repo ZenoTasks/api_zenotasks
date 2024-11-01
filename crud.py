@@ -27,6 +27,24 @@ def deleteTask(id: int,session:Session,user:User) -> Task:
     session.commit()
     return task
 
+def updateTask(id: int,task: Task,session:Session,user:User) -> Task:
+    taskDB = session.get(Task, id)
+    
+    if taskDB == None:
+        raise HTTPException(status_code=404, detail="Task not found")
+
+    if taskDB.user != user:
+        raise HTTPException(status_code=401, detail="You are not authorized to update this task")
+    
+    taskDB.title = task.title
+    taskDB.description = task.description
+    taskDB.done = task.done
+    session.add(taskDB)
+    session.commit()
+    session.refresh(taskDB)
+
+    return task
+
 def createUser(user: User,session:Session) -> User:
     session.add(user)
     session.commit()
