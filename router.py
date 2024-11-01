@@ -15,8 +15,8 @@ def get_Me(user: User = Depends(get_current_user)) -> User:
     return user
 
 @tasksRouter.get("/tasks")
-def get_Tasks(limit: int = 10, offset: int = 0, session: Session = Depends(get_session),user: User = Depends(get_current_user)) -> list[Task]:
-    return getTasks(limit=limit,offset=offset,session=session,user=user)
+def get_Tasks(limit: int = 10, offset: int = 0, order_by: str = "id", order_direction: str = "asc", session: Session = Depends(get_session),user: User = Depends(get_current_user)) -> list[Task]:
+    return getTasks(limit=limit,offset=offset,session=session,user=user,order_by=order_by,order_direction=order_direction)
 
 @tasksRouter.post("/tasks")
 def create_Task(task: Task, session: Session = Depends(get_session),user: User = Depends(get_current_user)) -> Task:
