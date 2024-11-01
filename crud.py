@@ -1,10 +1,7 @@
 from sqlmodel import select
 from models import Task, User
 from sqlmodel import Session
-
-def getTask(task_id: int,session:Session) -> Task:
-    task = session.get(Task, task_id)
-    return task
+from fastapi import HTTPException
 
 def createTask(task: Task,session:Session,user:User) -> Task:
     task.user = user
@@ -16,6 +13,19 @@ def createTask(task: Task,session:Session,user:User) -> Task:
 def getTasks(offset: int,limit: int,session:Session,user:User) -> Task:
     tasks = session.exec(select(Task).where(Task.user == user).offset(offset).limit(limit)).all()
     return tasks
+
+def deleteTask(id: int,session:Session,user:User) -> Task:
+    task = session.get(Task, id)
+    
+    if task==None:
+        raise HTTPException(status_code=404, detail="Task not found")
+
+    if task.user != user:
+        raise HTTPException(status_code=401, detail="You are not authorized to delete this task")
+    
+    session.delete(task)
+    session.commit()
+    return task
 
 def createUser(user: User,session:Session) -> User:
     session.add(user)
