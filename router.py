@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends
 from auth import get_current_user
-from crud import getTasks,createTask,deleteTask
+from crud import getTasks,createTask,deleteTask,updateTask
 from models import Task,User
 from database import get_session
 from sqlmodel import Session
@@ -25,3 +25,7 @@ def create_Task(task: Task, session: Session = Depends(get_session),user: User =
 @tasksRouter.delete("/tasks/{task_id}")
 def delete_Task(task_id: int, session: Session = Depends(get_session),user: User = Depends(get_current_user)) -> Task:
     return deleteTask(id=task_id,session=session,user=user)
+
+@tasksRouter.put("/tasks/{task_id}")
+def update_Task(task_id: int, task: Task, session: Session = Depends(get_session),user: User = Depends(get_current_user)) -> Task:
+    return updateTask(id=task_id,task=task,session=session,user=user)
