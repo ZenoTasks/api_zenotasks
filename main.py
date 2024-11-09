@@ -1,9 +1,19 @@
+from contextlib import asynccontextmanager
 from typing import Union
 
 from fastapi import FastAPI
+from router import tasksRouter
+from database import create_db_and_tables
 
-app = FastAPI()
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    create_db_and_tables()
+    yield
 
+
+app = FastAPI(lifespan=lifespan)
+
+app.include_router(tasksRouter)
 
 @app.get("/")
 def read_root():
