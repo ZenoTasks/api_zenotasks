@@ -7,15 +7,14 @@ from models import User
 from crud import getUser,createUser
 from sqlmodel import Session
 from database import get_session
-
-GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
+from settings import settings
 
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 def verify_google_id_token(token: str):
     try:
-        idinfo = id_token.verify_oauth2_token(token, requests.Request(), GOOGLE_CLIENT_ID)
+        idinfo = id_token.verify_oauth2_token(token, requests.Request(), settings.google_client_id)
         return idinfo
     except ValueError as e:
         raise HTTPException(status_code=401, detail=f"Invalid token: {e}")
